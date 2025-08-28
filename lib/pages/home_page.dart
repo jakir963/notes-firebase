@@ -61,13 +61,23 @@ class _HomePageState extends State<HomePage> {
               String noteText = data['note'];
               return ListTile(
                 title: Text(noteText),
-                trailing: IconButton(
-                  onPressed: () => openNoteBox(docID: docID),
-                  icon: Icon(Icons.edit),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () => openNoteBox(docID: docID),
+                      icon: Icon(Icons.edit),
+                    ),
+                    IconButton(
+                      onPressed: () =>firestoreService.deleteNote(docID),
+                      icon: Icon(Icons.delete),
+                    ),
+
+                  ],
                 )
               );
             });
-          }
+          }//trailing
           else return const Text("no notes yet");
         }
       )

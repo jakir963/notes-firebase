@@ -31,6 +31,8 @@ Future <void> updateNotes(String docID,String newNote){
   );
 }
   // DELETE :  delete notes given a doc id
-
+Future <void> deleteNote(String docID){
+  return notes.doc(docID).delete();
+}
 
 }
