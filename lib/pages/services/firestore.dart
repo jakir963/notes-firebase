@@ -23,8 +23,13 @@ Stream<QuerySnapshot> getNoteStraem(){
 
 
   //UPDATE : update notes given a doc id
-
-
+Future <void> updateNotes(String docID,String newNote){
+  return notes.doc(docID).update({
+    'mote': newNote,
+    'timestamp': Timestamp.now()
+  }
+  );
+}
   // DELETE :  delete notes given a doc id
 
 

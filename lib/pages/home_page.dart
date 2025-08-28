@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirestoreService firestoreService = FirestoreService();
   final TextEditingController textController = TextEditingController();
-  void openNoteBox(){
+  void openNoteBox({String ? docID}){
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -21,7 +21,10 @@ class _HomePageState extends State<HomePage> {
           actions: [
             ElevatedButton(
                 onPressed: (){
-                  firestoreService.addNotes(textController.text);
+        if (docID == null){
+          firestoreService.addNotes(textController.text);
+        }
+        else firestoreService.updateNotes(docID, textController.text);
                   textController.clear();
                   Navigator.pop(context);
                 },
@@ -58,7 +61,10 @@ class _HomePageState extends State<HomePage> {
               String noteText = data['note'];
               return ListTile(
                 title: Text(noteText),
-                trailing: IconButton(onPressed: (){}, icon: Icon(Icons.edit),)
+                trailing: IconButton(
+                  onPressed: () => openNoteBox(docID: docID),
+                  icon: Icon(Icons.edit),
+                )
               );
             });
           }
