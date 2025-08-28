@@ -1,15 +1,70 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-class HomePage extends StatelessWidget {
+import 'package:notes/pages/services/firestore.dart';
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final FirestoreService firestoreService = FirestoreService();
+  final TextEditingController textController = TextEditingController();
+  void openNoteBox(){
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: TextField(
+            controller:textController,
+          ),
+          actions: [
+            ElevatedButton(
+                onPressed: (){
+                  firestoreService.addNotes(textController.text);
+                  textController.clear();
+                  Navigator.pop(context);
+                },
+                child: Text("add?")
+            )
+          ],
+        )
+
+    );
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return   Scaffold(
       appBar: AppBar(title: Text("Notes"),),
       floatingActionButton: FloatingActionButton(
-          onPressed: (){},
-      child: const Icon(Icons.add),
+        onPressed: openNoteBox,
+        child: const Icon(Icons.cyclone),
       ),
-    );
+      body: StreamBuilder<QuerySnapshot>(
+        stream: firestoreService.getNoteStraem(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData){
+            List noteList = snapshot.data!.docs;
+            return ListView.builder(
+                itemCount: noteList.length,
+                itemBuilder: (context, index){
+              DocumentSnapshot document = noteList[index];
+              String docID = document.id;
+
+              Map <String, dynamic> data =
+              document.data() as Map<String, dynamic>;
+              String noteText = data['note'];
+              return ListTile(
+                title: Text(noteText),
+                trailing: IconButton(onPressed: (){}, icon: Icon(Icons.edit),)
+              );
+            });
+          }
+          else return const Text("no notes yet");
+        }
+      )
+    );;
   }
 }
